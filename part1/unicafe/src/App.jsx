@@ -18,6 +18,10 @@ const App = () => {
     setBad(bad + 1)
   }
 
+  let all = good + neutral + bad
+  let average = all === 0 ? 0 : (good - bad) / all
+  let positive = all === 0 ? 0 : (good / all) * 100
+
   return (
     <div>
       <h2>give feedback</h2>
@@ -29,6 +33,9 @@ const App = () => {
       <p>good {good}</p>
       <p>neutral {neutral}</p>
       <p>bad {bad}</p>
+      <p>all {all}</p>
+      <p>average {average}</p>
+      <p>positive {positive} %</p>
     </div>
   )
 }
