@@ -14,11 +14,22 @@ const Content = ({ parts }) => (
   </>
 )
 
+const Total = ({ total }) => (
+  <p>
+    <strong>total of {total} exercises</strong>
+  </p>
+)
+
 const Course = ({ course }) => {
+  const total = course.parts
+    .map((part) => part.exercises)
+    .reduce((sum, cur) => sum + cur, 0)
+
   return (
     <>
       <Header course={course.name} />
       <Content parts={course.parts} />
+      <Total total={total} />
     </>
   )
 }
