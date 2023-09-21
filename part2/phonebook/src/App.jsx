@@ -9,6 +9,14 @@ const App = () => {
     const newPersonObject = {
       name: newName,
     }
+    const exists = persons.find(
+      (person) => person.name.toLowerCase() === newName.toLowerCase()
+    )
+    if (exists) {
+      window.alert(`${newName} is already added to phonebook`)
+      return
+    }
+
     setPersons(persons.concat(newPersonObject))
     setNewName('')
   }
