@@ -1,8 +1,8 @@
 const PersonDetails = ({ person, removePerson }) => (
-  <div>
+  <p>
     {person.name} {person.number}
     <button onClick={removePerson}>delete</button>
-  </div>
+  </p>
 )
 
 export default PersonDetails
