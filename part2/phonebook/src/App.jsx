@@ -52,10 +52,13 @@ const App = () => {
             persons.map((p) => (p.id !== person.id ? p : updatedPerson))
           )
           clearFields()
-          infoMessage(`Updated ${updatePerson.name}`)
+          infoMessage(`Updated ${updatedPerson.name}`)
         })
         .catch((error) => {
           console.error(error)
+          infoMessage(`Error updating ${person.name}`, 'error')
+          setPersons(persons.filter((p) => p.id !== person.id))
+          clearFields()
         })
     }
   }
@@ -83,6 +86,8 @@ const App = () => {
       })
       .catch((error) => {
         console.error(error)
+        clearFields()
+        infoMessage(`Error adding ${newPersonObject.name}`, 'error')
       })
   }
 
@@ -98,6 +103,8 @@ const App = () => {
         })
         .catch((error) => {
           console.error(error)
+          infoMessage(`Error deleting ${person.name}`, 'error')
+          setPersons(persons.filter((p) => p.id !== person.id))
         })
     }
   }
