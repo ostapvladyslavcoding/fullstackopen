@@ -2,10 +2,28 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 
 const Country = ({ country }) => {
+  const [weather, setWeather] = useState(null)
   const capital = country.capital[0]
   const area = country.area
   const languages = Object.values(country.languages)
   const flag = country.flags.png
+
+  useEffect(() => {
+    const API_KEY = import.meta.env.VITE_SOME_KEY
+    const lat = country.capitalInfo.latlng[0]
+    const lon = country.capitalInfo.latlng[1]
+    const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${API_KEY}`
+    axios.get(url).then((response) => {
+      setWeather(response.data)
+    })
+  }, [])
+
+  if (!weather) {
+    return null
+  }
+
+  const icon = weather.weather[0].icon
+  const weatherIcon = `http://openweathermap.org/img/wn/${icon}@2x.png`
 
   return (
     <div>
@@ -24,6 +42,16 @@ const Country = ({ country }) => {
         src={flag}
         width='200'
       />
+
+      <p>
+        <strong>Weather in {capital}</strong>
+      </p>
+
+      <p>temperature {weather.main.temp} Celsius</p>
+
+      <img src={weatherIcon} />
+
+      <p>wind {weather.wind.speed} m/s</p>
     </div>
   )
 }
