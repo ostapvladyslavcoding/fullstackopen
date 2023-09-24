@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import Filter from './components/Filter'
+import Notification from './components/Notification'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
 import personService from './services/persons'
@@ -9,6 +10,7 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filter, setFilter] = useState('')
+  const [info, setInfo] = useState({ message: null })
 
   useEffect(() => {
     personService
@@ -20,6 +22,22 @@ const App = () => {
         console.error(error)
       })
   }, [])
+
+  const clearFields = () => {
+    setNewName('')
+    setNewNumber('')
+  }
+
+  const infoMessage = (message, type = 'info') => {
+    setInfo({
+      message,
+      type,
+    })
+
+    setTimeout(() => {
+      setInfo({ message: null })
+    }, 5000)
+  }
 
   const updatePerson = (person) => {
     const ok = window.confirm(
@@ -33,12 +51,12 @@ const App = () => {
           setPersons(
             persons.map((p) => (p.id !== person.id ? p : updatedPerson))
           )
+          clearFields()
+          infoMessage(`Updated ${updatePerson.name}`)
         })
         .catch((error) => {
           console.error(error)
         })
-      setNewName('')
-      setNewNumber('')
     }
   }
 
@@ -60,8 +78,8 @@ const App = () => {
       .create(newPersonObject)
       .then((returnedPerson) => {
         setPersons(persons.concat(returnedPerson))
-        setNewName('')
-        setNewNumber('')
+        clearFields()
+        infoMessage(`Added ${returnedPerson.name}`)
       })
       .catch((error) => {
         console.error(error)
@@ -74,7 +92,10 @@ const App = () => {
     if (ok) {
       personService
         .remove(person.id)
-        .then(setPersons(persons.filter((p) => p.id !== person.id)))
+        .then(() => {
+          setPersons(persons.filter((p) => p.id !== person.id))
+          infoMessage(`Deleted ${person.name}`)
+        })
         .catch((error) => {
           console.error(error)
         })
@@ -87,6 +108,8 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+
+      <Notification info={info} />
 
       <Filter
         filter={filter}
