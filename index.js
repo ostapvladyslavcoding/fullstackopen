@@ -26,6 +26,12 @@ let persons = [
   },
 ]
 
+const generateId = () => {
+  min = Math.ceil(1)
+  max = Math.floor(100000)
+  return Math.floor(Math.random() * (max - min) + min) //
+}
+
 app.get('/info', (req, res) => {
   const date = new Date()
   res.send(`
@@ -54,6 +60,18 @@ app.delete('/api/persons/:id', (req, res) => {
 
   persons = persons.filter((person) => person.id !== id)
   res.status(204).end()
+})
+
+app.post('/api/persons', (req, res) => {
+  const body = req.body
+  const person = {
+    name: body.name,
+    number: body.number,
+    id: generateId(),
+  }
+
+  persons = persons.concat(person)
+  res.json(person)
 })
 
 const PORT = 3001
