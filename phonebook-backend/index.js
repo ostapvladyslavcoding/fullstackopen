@@ -68,18 +68,15 @@ app.delete('/api/persons/:id', (req, res, next) => {
 })
 
 app.post('/api/persons', (req, res, next) => {
-  const body = req.body
+  const { name, number } = req.body
 
-  if (!body.name || !body.number) {
+  if (!name || !number) {
     return res.status(400).json({
       error: 'name or number is missing',
     })
   }
 
-  const person = new Person({
-    name: body.name,
-    number: body.number,
-  })
+  const person = new Person({ name, number })
 
   person
     .save()
@@ -88,6 +85,26 @@ app.post('/api/persons', (req, res, next) => {
     })
     .catch((error) => next(error))
 })
+
+app.put('/api/persons/:id', (req, res, next) => {
+  const { name, number } = req.body
+
+  if (!name || !number) {
+    return res.status(400).json({
+      error: 'name or number is missing',
+    })
+  }
+  const person = { name, number }
+
+  Person.findByIdAndUpdate(req.params.id, person, { new: true })
+    .then((updatedPerson) => {
+      res.json(updatedPerson)
+    })
+    .catch((error) => next(error))
+})
+
+app.use(unknownEndpoint)
+app.use(errorHandler)
 
 const PORT = process.env.PORT
 app.listen(PORT, () => {
