@@ -1,3 +1,4 @@
+require('dotenv').config()
 const express = require('express')
 const app = express()
 const cors = require('cors')
@@ -12,7 +13,7 @@ const blogSchema = new mongoose.Schema({
 
 const Blog = mongoose.model('Blog', blogSchema)
 
-const mongoUrl = 'mongodb://localhost/bloglist'
+const mongoUrl = process.env.MONGODB_URI
 mongoose.connect(mongoUrl)
 
 app.use(cors())
@@ -22,6 +23,10 @@ app.get('/api/blogs', (request, response) => {
   Blog.find({}).then((blogs) => {
     response.json(blogs)
   })
+})
+
+app.get('/', (request, response) => {
+  response.json({ hello: 'world' })
 })
 
 app.post('/api/blogs', (request, response) => {
