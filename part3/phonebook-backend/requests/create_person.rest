@@ -1,0 +1,23 @@
+POST https://ostapfullstackopen.fly.dev/api/persons
+Content-Type: application/json
+
+{
+  "name": "Vladyslav",
+  "number": "124356789"
+}
+
+###
+POST https://ostapfullstackopen.fly.dev/api/persons
+Content-Type: application/json
+
+{
+  "number": "000000000"
+}
+###
+POST https://ostapfullstackopen.fly.dev/api/persons
+Content-Type: application/json
+
+{
+  "name": "Vladyslav",
+  "number": "000000000"
+}

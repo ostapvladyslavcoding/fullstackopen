@@ -1,0 +1,5 @@
+GET https://ostapfullstackopen.fly.dev/api/persons
+###
+DELETE https://ostapfullstackopen.fly.dev/api/persons/65187d1f29c5d5461b6101d6
+###
+GET https://ostapfullstackopen.fly.dev/api/persons/65187d1f29c5d5461b6101d6
