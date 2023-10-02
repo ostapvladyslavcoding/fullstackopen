@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+
 import Filter from './components/Filter'
 import Notification from './components/Notification'
 import PersonForm from './components/PersonForm'
@@ -19,7 +20,7 @@ const App = () => {
         setPersons(initialPersons)
       })
       .catch((error) => {
-        console.error(error)
+        console.error(error.response.data.error)
       })
   }, [])
 
@@ -56,9 +57,9 @@ const App = () => {
         })
         .catch((error) => {
           console.error(error)
-          infoMessage(`Error updating ${person.name}`, 'error')
           setPersons(persons.filter((p) => p.id !== person.id))
           clearFields()
+          infoMessage(error.response.data.error, 'error')
         })
     }
   }
@@ -87,7 +88,7 @@ const App = () => {
       .catch((error) => {
         console.error(error)
         clearFields()
-        infoMessage(`Error adding ${newPersonObject.name}`, 'error')
+        infoMessage(error.response.data.error, 'error')
       })
   }
 
@@ -103,8 +104,8 @@ const App = () => {
         })
         .catch((error) => {
           console.error(error)
-          infoMessage(`Error deleting ${person.name}`, 'error')
           setPersons(persons.filter((p) => p.id !== person.id))
+          infoMessage(error.response.data.error, 'error')
         })
     }
   }
