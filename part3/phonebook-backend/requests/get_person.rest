@@ -1,0 +1,4 @@
+
+GET https://ostapfullstackopen.fly.dev/api/persons
+###
+GET https://ostapfullstackopen.fly.dev/api/persons/1
