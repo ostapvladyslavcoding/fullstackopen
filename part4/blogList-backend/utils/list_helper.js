@@ -20,9 +20,23 @@ const mostBlogs = (blogs) => {
   return numBlogs.sort((a, b) => b.blogs - a.blogs)[0]
 }
 
+const mostLikes = (blogs) => {
+  const blogsByAuthor = Object.entries(groupBy(blogs, (blog) => blog.author))
+
+  const numLikes = blogsByAuthor.reduce((result, [author, blogs]) => {
+    return result.concat({
+      author,
+      likes: blogs.reduce((sum, cur) => sum + cur.likes, 0),
+    })
+  }, [])
+
+  return numLikes.sort((a, b) => b.likes - a.likes)[0]
+}
+
 module.exports = {
   dummy,
   totalLikes,
   favoriteBlog,
   mostBlogs,
+  mostLikes,
 }
