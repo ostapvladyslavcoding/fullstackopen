@@ -52,7 +52,7 @@ describe('addition of a new blog', () => {
     expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
 
     const titles = blogsAtEnd.map((b) => b.title)
-    expect(titles).toContain('newTitle')
+    expect(titles).toContain(newBlog.title)
   })
 
   test('when likes are missing from blog, it will default to value 0', async () => {
@@ -108,6 +108,66 @@ describe('deletion of a blog', () => {
 
     const blogsAtEnd = await helper.blogsInDb()
     expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
+  })
+})
+
+describe('update of a blog', () => {
+  test('succeeds with status 200 with valid id', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+    const blogToUpdate = blogsAtStart[0]
+
+    const editedBlog = {
+      ...blogToUpdate,
+      author: 'updatedAuthor',
+      likes: 1,
+    }
+
+    await api
+      .put(`/api/blogs/${blogToUpdate.id}`)
+      .send(editedBlog)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    const blogsAtEnd = await helper.blogsInDb()
+
+    const authors = blogsAtEnd.map((b) => b.author)
+    expect(authors).toContain(editedBlog.author)
+  })
+  test('fails with status 400 with invalid id', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+    const blogToUpdate = blogsAtStart[0]
+    const nonExistingId = await helper.nonExistingId()
+
+    const editedBlog = {
+      ...blogToUpdate,
+      author: 'updatedAuthor',
+      likes: 1,
+    }
+
+    await api.put(`/api/blogs/${nonExistingId}`).send(editedBlog).expect(400)
+
+    const blogsAtEnd = await helper.blogsInDb()
+
+    const authors = blogsAtEnd.map((b) => b.author)
+    expect(authors).not.toContain(editedBlog.author)
+  })
+
+  test('fails with status 400 with invalid data', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+    const blogToUpdate = blogsAtStart[0]
+    const nonExistingId = await helper.nonExistingId()
+
+    const editedBlog = {
+      ...blogToUpdate,
+      likes: 'ads',
+    }
+
+    await api.put(`/api/blogs/${nonExistingId}`).send(editedBlog).expect(400)
+
+    const blogsAtEnd = await helper.blogsInDb()
+
+    const likes = blogsAtEnd.map((b) => b.likes)
+    expect(likes).not.toContain(editedBlog.likes)
   })
 })
 
