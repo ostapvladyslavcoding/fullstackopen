@@ -7,7 +7,7 @@ blogsRouter.get('/', async (req, res) => {
 })
 
 blogsRouter.post('/', async (req, res) => {
-  const { title, author, url, likes } = require.body
+  const { title, author, url, likes } = req.body
 
   const blog = new Blog({
     title,

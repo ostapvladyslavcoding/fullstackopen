@@ -30,6 +30,27 @@ test('unique identified is called "id" and not "_id"', async () => {
   expect(res.body[0]._id).not.toBeDefined()
 })
 
+test('adding a blog successfully creates new blog', async () => {
+  const newBlog = {
+    title: 'newTitle',
+    author: 'newAuthor',
+    url: 'newUrl',
+    likes: 0,
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+  const blogsAtEnd = await helper.blogsInDb()
+  expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
+
+  const titles = blogsAtEnd.map((b) => b.title)
+  expect(titles).toContain('newTitle')
+})
+
 afterAll(async () => {
   await mongoose.connection.close()
 })
