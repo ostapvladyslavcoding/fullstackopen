@@ -70,6 +70,18 @@ test('when likes are missing from blog, it will default to value 0', async () =>
   expect(savedBlog.body.likes).toBe(0)
 })
 
+test('when title or url are missing from blog, it will not be saved', async () => {
+  const newBlog = {
+    author: 'newAuthor',
+    likes: 5,
+  }
+
+  await api.post('/api/blogs').send(newBlog).expect(400)
+
+  const blogsAtEnd = await helper.blogsInDb()
+  expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
+})
+
 afterAll(async () => {
   await mongoose.connection.close()
 })
