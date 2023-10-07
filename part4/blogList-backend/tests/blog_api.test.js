@@ -51,6 +51,25 @@ test('adding a blog successfully creates new blog', async () => {
   expect(titles).toContain('newTitle')
 })
 
+test('when likes are missing from blog, it will default to value 0', async () => {
+  const newBlog = {
+    title: 'newTitle',
+    author: 'newAuthor',
+    url: 'newUrl',
+  }
+
+  const savedBlog = await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+  const blogsAtEnd = await helper.blogsInDb()
+  expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
+
+  expect(savedBlog.body.likes).toBe(0)
+})
+
 afterAll(async () => {
   await mongoose.connection.close()
 })
