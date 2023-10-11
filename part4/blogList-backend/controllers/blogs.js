@@ -1,8 +1,6 @@
 const blogsRouter = require('express').Router()
-const jwt = require('jsonwebtoken')
 
 const Blog = require('../models/blog')
-const User = require('../models/user')
 
 blogsRouter.get('/', async (req, res) => {
   const blogs = await Blog.find({}).populate('user', { username: 1, name: 1 })
@@ -12,11 +10,11 @@ blogsRouter.get('/', async (req, res) => {
 blogsRouter.post('/', async (req, res) => {
   const { title, author, url, likes } = req.body
 
-  const decodedToken = jwt.verify(req.token, process.env.SECRET)
-  if (!decodedToken.id) {
-    return res.status(401).json({ error: 'token invalid' })
+  const user = req.user
+
+  if (!user) {
+    return res.status(401).json({ error: 'operation not permitted' })
   }
-  const user = await User.findById(decodedToken.id)
 
   const blog = new Blog({
     title,
@@ -36,11 +34,11 @@ blogsRouter.post('/', async (req, res) => {
 blogsRouter.delete('/:id', async (req, res) => {
   const blog = await Blog.findById(req.params.id)
 
-  const decodedToken = jwt.verify(req.token, process.env.SECRET)
-  if (!decodedToken.id) {
-    return res.status(401).json({ error: 'token invalid' })
+  if (!blog) {
+    return res.status(404).json({ error: 'blog not found' })
   }
-  const user = await User.findById(decodedToken.id)
+
+  const user = req.user
 
   if (!user || blog.user.toString() !== user.id.toString()) {
     return res.status(401).json({ error: 'operation not permitted' })
@@ -57,17 +55,25 @@ blogsRouter.delete('/:id', async (req, res) => {
 blogsRouter.put('/:id', async (req, res) => {
   const { title, url, author, likes } = req.body
 
+  const blog = await Blog.findById(req.params.id)
+
+  if (!blog) {
+    return res.status(404).json({ error: 'blog not found' })
+  }
+
+  const user = req.user
+
+  if (!user || blog.user.toString() !== user.id.toString()) {
+    return res.status(401).json({ error: 'operation not permitted' })
+  }
+
   const updatedBlog = await Blog.findByIdAndUpdate(
     req.params.id,
     { title, url, author, likes },
-    { new: true }
+    { new: true, runValidators: true, context: 'query' }
   )
 
-  if (updatedBlog) {
-    res.json(updatedBlog)
-  } else {
-    res.status(400).end()
-  }
+  res.json(updatedBlog)
 })
 
 module.exports = blogsRouter
