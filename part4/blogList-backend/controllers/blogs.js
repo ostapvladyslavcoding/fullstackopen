@@ -35,7 +35,7 @@ blogsRouter.delete('/:id', async (req, res) => {
   const blog = await Blog.findById(req.params.id)
 
   if (!blog) {
-    return res.status(404).json({ error: 'blog not found' })
+    res.status(204).end()
   }
 
   const user = req.user
@@ -58,7 +58,7 @@ blogsRouter.put('/:id', async (req, res) => {
   const blog = await Blog.findById(req.params.id)
 
   if (!blog) {
-    return res.status(404).json({ error: 'blog not found' })
+    return res.status(400).json({ error: 'blog not found' })
   }
 
   const user = req.user
