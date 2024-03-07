@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Blog from './components/Blog'
 import BlogForm from './components/BlogForm.jsx'
 import Togglable from './components/Togglable'
@@ -10,10 +10,9 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
   const [info, setInfo] = useState({ message: null })
+
+  const blogFormRef = useRef()
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs))
@@ -70,20 +69,12 @@ const App = () => {
     infoMessage('Logged out')
   }
 
-  const addBlog = async (e) => {
-    e.preventDefault()
-    const blogObject = {
-      title,
-      author,
-      url,
-    }
-
+  const addBlog = async (blogObject) => {
     try {
+      blogFormRef.current.toggleVisibility()
       const newBlog = await blogService.create(blogObject)
       setBlogs(blogs.concat(newBlog))
-      setTitle('')
-      setAuthor('')
-      setUrl('')
+
       infoMessage(`Added ${blogObject.title} by ${blogObject.author}!`)
     } catch (error) {
       infoMessage(error.response.data.error, 'error')
@@ -127,16 +118,11 @@ const App = () => {
       <div style={{ display: 'inline' }}>{user.name} logged in</div>
       <button onClick={handleLogout}>logout</button>
 
-      <Togglable buttonLabel='new blog'>
-        <BlogForm
-          handleSubmit={addBlog}
-          title={title}
-          handleTitleChange={({ target }) => setTitle(target.value)}
-          author={author}
-          handleAuthorChange={({ target }) => setAuthor(target.value)}
-          url={url}
-          handleUrlChange={({ target }) => setUrl(target.value)}
-        />
+      <Togglable
+        buttonLabel='new blog'
+        ref={blogFormRef}
+      >
+        <BlogForm createBlog={addBlog} />
       </Togglable>
 
       <h2>Blogs</h2>
