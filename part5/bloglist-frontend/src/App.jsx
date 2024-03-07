@@ -59,6 +59,7 @@ const App = () => {
       setPassword('')
       infoMessage(`Logged in as "${user.name}"`)
     } catch (error) {
+      console.error(error)
       infoMessage(error.response.data.error, 'error')
     }
   }
@@ -77,6 +78,7 @@ const App = () => {
 
       infoMessage(`Added "${blogObject.title}" by "${blogObject.author}"!`)
     } catch (error) {
+      console.error(error)
       infoMessage(error.response.data.error, 'error')
     }
   }
@@ -87,6 +89,17 @@ const App = () => {
 
       setBlogs(blogs.map((blog) => (blog.id === res.id ? res : blog)))
       infoMessage(`Liked "${res.title}"!`)
+    } catch (error) {
+      console.error(error)
+      infoMessage(error.response.data.error, 'error')
+    }
+  }
+
+  const deleteBlog = async (id) => {
+    try {
+      await blogService.remove(id)
+      setBlogs(blogs.filter((blog) => id.toString() !== blog.id.toString()))
+      infoMessage(`Deleted blog!`)
     } catch (error) {
       console.error(error)
       infoMessage(error.response.data.error, 'error')
@@ -145,6 +158,8 @@ const App = () => {
             key={blog.id}
             blog={blog}
             updateLikes={updateLikes}
+            deleteBlog={deleteBlog}
+            currentUser={user.username}
           />
         ))}
     </div>
