@@ -52,26 +52,46 @@ blogsRouter.delete('/:id', async (req, res) => {
   res.status(204).end()
 })
 
+// blogsRouter.put('/:id', async (req, res) => {
+//   const { title, url, author, likes } = req.body
+
+//   const blog = await Blog.findById(req.params.id)
+
+//   if (!blog) {
+//     return res.status(400).json({ error: 'blog not found' })
+//   }
+
+//   const user = req.user
+
+//   if (!user || blog.user.toString() !== user.id.toString()) {
+//     return res.status(401).json({ error: 'operation not permitted' })
+//   }
+
+//   const updatedBlog = await Blog.findByIdAndUpdate(
+//     req.params.id,
+//     { title, url, author, likes },
+//     { new: true, runValidators: true, context: 'query' }
+//   )
+
+//   res.json(updatedBlog)
+// })
+
 blogsRouter.put('/:id', async (req, res) => {
-  const { title, url, author, likes } = req.body
+  const body = req.body
 
-  const blog = await Blog.findById(req.params.id)
-
-  if (!blog) {
-    return res.status(400).json({ error: 'blog not found' })
+  const blog = {
+    user: body.user,
+    title: body.title,
+    author: body.author,
+    url: body.url,
+    likes: body.likes,
   }
 
-  const user = req.user
-
-  if (!user || blog.user.toString() !== user.id.toString()) {
-    return res.status(401).json({ error: 'operation not permitted' })
-  }
-
-  const updatedBlog = await Blog.findByIdAndUpdate(
-    req.params.id,
-    { title, url, author, likes },
-    { new: true, runValidators: true, context: 'query' }
-  )
+  const updatedBlog = await Blog.findByIdAndUpdate(req.params.id, blog, {
+    new: true,
+    runValidators: true,
+    context: 'query',
+  })
 
   res.json(updatedBlog)
 })

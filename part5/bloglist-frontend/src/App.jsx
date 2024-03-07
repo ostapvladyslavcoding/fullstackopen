@@ -57,7 +57,7 @@ const App = () => {
       setUser(user)
       setUsername('')
       setPassword('')
-      infoMessage(`Logged in as ${user.name}`)
+      infoMessage(`Logged in as "${user.name}"`)
     } catch (error) {
       infoMessage(error.response.data.error, 'error')
     }
@@ -75,8 +75,20 @@ const App = () => {
       const newBlog = await blogService.create(blogObject)
       setBlogs(blogs.concat(newBlog))
 
-      infoMessage(`Added ${blogObject.title} by ${blogObject.author}!`)
+      infoMessage(`Added "${blogObject.title}" by "${blogObject.author}"!`)
     } catch (error) {
+      infoMessage(error.response.data.error, 'error')
+    }
+  }
+
+  const updateLikes = async (id, updatedBlog) => {
+    try {
+      const res = await blogService.update(id, updatedBlog)
+
+      setBlogs(blogs.map((blog) => (blog.id === res.id ? res : blog)))
+      infoMessage(`Liked "${res.title}"!`)
+    } catch (error) {
+      console.error(error)
       infoMessage(error.response.data.error, 'error')
     }
   }
@@ -130,6 +142,7 @@ const App = () => {
         <Blog
           key={blog.id}
           blog={blog}
+          updateLikes={updateLikes}
         />
       ))}
     </div>
