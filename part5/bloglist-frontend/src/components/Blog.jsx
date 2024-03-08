@@ -37,7 +37,10 @@ const Blog = ({ blog, updateLikes, deleteBlog, currentUser }) => {
       <div style={hideWhenVisible}>
         <button onClick={() => setDetailsVisible(true)}>View</button>
       </div>
-      <div style={showWhenVisible}>
+      <div
+        className='togglableContent'
+        style={showWhenVisible}
+      >
         <button onClick={() => setDetailsVisible(false)}>Hide</button>
         <p>{blog.url}</p>
         <p>
