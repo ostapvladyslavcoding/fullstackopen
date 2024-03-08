@@ -32,7 +32,6 @@ describe('<Blog />', () => {
 
   test('displays blog title and author but not its URL or likes', () => {
     const blogTitle = screen.getByText('blogTitle', { exact: false })
-    screen.debug(blogTitle)
     expect(blogTitle).toBeDefined()
     const blogAuthor = screen.getByText('blogAuthor', { exact: false })
     expect(blogAuthor).toBeDefined()
@@ -52,5 +51,15 @@ describe('<Blog />', () => {
     expect(blogUrl).not.toHaveStyle('display: none')
     const blogLikes = container.querySelector('.togglableContent')
     expect(blogLikes).not.toHaveStyle('display: none')
+  })
+
+  test('if the like button is clicked twice, the event handler is called twice', async () => {
+    const user = userEvent.setup()
+    const viewButton = screen.getByText('View')
+    await user.click(viewButton)
+    const likeButton = screen.getByText('like')
+    await user.click(likeButton)
+    await user.click(likeButton)
+    expect(updateLikes.mock.calls).toHaveLength(2)
   })
 })
