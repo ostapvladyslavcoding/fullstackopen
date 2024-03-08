@@ -99,7 +99,7 @@ const App = () => {
     try {
       await blogService.remove(id)
       setBlogs(blogs.filter((blog) => id.toString() !== blog.id.toString()))
-      infoMessage(`Deleted blog!`)
+      infoMessage('Deleted blog!')
     } catch (error) {
       console.error(error)
       infoMessage(error.response.data.error, 'error')
