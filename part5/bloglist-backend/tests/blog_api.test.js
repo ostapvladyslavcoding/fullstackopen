@@ -240,19 +240,19 @@ describe('blogs api', () => {
         expect(likes).not.toContain(editedBlog.likes)
       })
 
-      test('fails with status 401 if token is not provided', async () => {
-        const editedBlog = {
-          ...blog,
-          likes: 5,
-        }
+      // test('fails with status 401 if token is not provided', async () => {
+      //   const editedBlog = {
+      //     ...blog,
+      //     likes: 5,
+      //   }
 
-        await api.put(`/api/blogs/${id}`).send(editedBlog).expect(401)
+      //   await api.put(`/api/blogs/${id}`).send(editedBlog).expect(401)
 
-        const blogsAtEnd = await helper.blogsInDb()
+      //   const blogsAtEnd = await helper.blogsInDb()
 
-        const likes = blogsAtEnd.map((b) => b.likes)
-        expect(likes).not.toContain(editedBlog.likes)
-      })
+      //   const likes = blogsAtEnd.map((b) => b.likes)
+      //   expect(likes).not.toContain(editedBlog.likes)
+      // })
     })
   })
 

@@ -13,7 +13,9 @@ blogsRouter.post('/', async (req, res) => {
   const user = req.user
 
   if (!user) {
-    return res.status(401).json({ error: 'operation not permitted' })
+    return res
+      .status(401)
+      .json({ error: 'operation not permitted, please login again' })
   }
 
   const blog = new Blog({
@@ -27,7 +29,6 @@ blogsRouter.post('/', async (req, res) => {
   const savedBlog = await blog.save()
   user.blogs = user.blogs.concat(savedBlog._id)
   await user.save()
-
   res.status(201).json(savedBlog)
 })
 
@@ -85,6 +86,12 @@ blogsRouter.put('/:id', async (req, res) => {
     author: body.author,
     url: body.url,
     likes: body.likes,
+  }
+
+  const findBlog = await Blog.findById(req.params.id)
+
+  if (!findBlog) {
+    return res.status(400).json({ error: 'blog not found' })
   }
 
   const updatedBlog = await Blog.findByIdAndUpdate(req.params.id, blog, {
