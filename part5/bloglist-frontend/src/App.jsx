@@ -153,17 +153,19 @@ const App = () => {
       </Togglable>
 
       <h2>Blogs</h2>
-      {blogs
-        .sort((a, b) => b.likes - a.likes)
-        .map((blog) => (
-          <Blog
-            key={blog.id}
-            blog={blog}
-            updateLikes={updateLikes}
-            deleteBlog={deleteBlog}
-            currentUser={user.username}
-          />
-        ))}
+      <div data-testid='parent'>
+        {blogs
+          .sort((a, b) => b.likes - a.likes)
+          .map((blog) => (
+            <Blog
+              key={blog.id}
+              blog={blog}
+              updateLikes={updateLikes}
+              deleteBlog={deleteBlog}
+              currentUser={user.username}
+            />
+          ))}
+      </div>
     </div>
   )
 }

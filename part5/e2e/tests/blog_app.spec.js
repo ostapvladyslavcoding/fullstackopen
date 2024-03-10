@@ -45,7 +45,7 @@ describe('Blog app', () => {
       await expect(page.getByText('newTitle newAuthor')).toBeVisible()
     })
 
-    describe('and a blog exists', () => {
+    describe('and a blogs exists', () => {
       beforeEach(async ({ page }) => {
         await createBlog(page, 'firstTitle', 'firstAuthor', 'firstURL')
         await createBlog(page, 'secondTitle', 'secondAuthor', 'secondURL')
@@ -101,6 +101,78 @@ describe('Blog app', () => {
         await expect(
           div.getByRole('button', { name: 'delete' })
         ).not.toBeVisible()
+      })
+
+      describe('when several blogs have likes already set', () => {
+        beforeEach(async ({ page, request }) => {
+          const token = await page.evaluate(() => {
+            const loggedUserJSON = window.localStorage.getItem(
+              'loggedBloglistappUser'
+            )
+            if (loggedUserJSON) {
+              return JSON.parse(loggedUserJSON).token
+            }
+          })
+          await request.post('/api/blogs', {
+            data: {
+              title: 'HIGHEST_BLOG',
+              author: 'HIGHEST_AUTHOR',
+              url: 'HIGHEST_URL',
+              likes: 4,
+            },
+            headers: {
+              authorization: `Bearer ${token}`,
+            },
+          })
+
+          await request.post('/api/blogs', {
+            data: {
+              title: 'NEXT_BLOG',
+              author: 'NEXT_AUTHOR',
+              url: 'NEXT_URL',
+              likes: 4,
+            },
+            headers: {
+              authorization: `Bearer ${token}`,
+            },
+          })
+        })
+
+        test('blogs are sorted by number of likes', async ({ page }) => {
+          await page.goto('/')
+          await expect(
+            page
+              .getByTestId('parent')
+              .getByTitle('blog')
+              .first()
+              .getByText('HIGHEST_BLOG HIGHEST_AUTHOR')
+          ).toBeVisible()
+
+          await expect(
+            page
+              .getByTestId('parent')
+              .getByTitle('blog')
+              .nth(1)
+              .getByText('NEXT_BLOG NEXT_AUTHOR')
+          ).toBeVisible()
+
+          await page
+            .getByTestId('parent')
+            .locator('div')
+            .filter({ hasText: 'NEXT_BLOG' })
+            .getByRole('button')
+            .click()
+
+          await page.getByRole('button', { name: 'like' }).click()
+
+          await expect(
+            page
+              .getByTestId('parent')
+              .getByTitle('blog')
+              .first()
+              .getByText('NEXT_BLOG NEXT_AUTHOR')
+          ).toBeVisible()
+        })
       })
     })
   })
