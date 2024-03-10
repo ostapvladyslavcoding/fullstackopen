@@ -79,6 +79,29 @@ describe('Blog app', () => {
 
         await expect(divToDelete).not.toBeVisible()
       })
+
+      test('only creator of a blog can see blog delete button', async ({
+        page,
+        request,
+      }) => {
+        await request.post('/api/users', {
+          data: {
+            name: 'Another User',
+            username: 'anotheruser',
+            password: 'test',
+          },
+        })
+        await page.getByRole('button', { name: 'logout' }).click()
+        await loginWith(page, 'anotheruser', 'test')
+
+        const div = await page.locator('div').filter({
+          hasText: /^secondTitle secondAuthorViewHidesecondURLlikes: 0 like$/,
+        })
+        await div.getByRole('button').click()
+        await expect(
+          div.getByRole('button', { name: 'delete' })
+        ).not.toBeVisible()
+      })
     })
   })
 })
