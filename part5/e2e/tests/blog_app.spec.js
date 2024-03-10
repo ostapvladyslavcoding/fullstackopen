@@ -44,5 +44,25 @@ describe('Blog app', () => {
       createBlog(page, 'newTitle', 'newAuthor', 'newURL')
       await expect(page.getByText('newTitle newAuthor')).toBeVisible()
     })
+
+    describe('and a blog exists', () => {
+      beforeEach(async ({ page }) => {
+        await createBlog(page, 'firstTitle', 'firstAuthor', 'firstURL')
+        await createBlog(page, 'secondTitle', 'secondAuthor', 'secondURL')
+        await createBlog(page, 'thirdTitle', 'thirdAuthor', 'thirdURL')
+      })
+
+      test('a blog can be edited', async ({ page }) => {
+        await page
+          .locator('div')
+          .filter({
+            hasText: /^secondTitle secondAuthorViewHidesecondURLlikes: 0 like$/,
+          })
+          .getByRole('button')
+          .click()
+        await page.getByRole('button', { name: 'like' }).click()
+        await expect(page.getByText('likes: 1 like')).toBeVisible()
+      })
+    })
   })
 })
