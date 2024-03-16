@@ -134,23 +134,28 @@ describe('blogs api', () => {
         id = response.body.id
       })
 
-      test('succeeds with status 204 if id is valid', async () => {
-        await api
+      test('succeeds with status 200 if id is valid', async () => {
+        const blog = helper.initialBlogs[0]
+        const response = await api
           .delete(`/api/blogs/${id}`)
           .set('Authorization', authHeader)
-          .expect(204)
+          .expect(200)
+
+        expect(response.body.title).toContain(blog.title)
 
         const blogsAtEnd = await helper.blogsInDb()
         expect(blogsAtEnd).toHaveLength(0)
       })
 
-      test('succeeds with status 204 if id is invalid', async () => {
+      test('succeeds with status 200 if id is invalid', async () => {
         const idToDelete = await helper.nonExistingId()
 
-        await api
+        const response = await api
           .delete(`/api/blogs/${idToDelete}`)
           .set('Authorization', authHeader)
-          .expect(204)
+          .expect(200)
+
+        expect(response.body.title).toBeUndefined()
 
         const blogsAtEnd = await helper.blogsInDb()
         expect(blogsAtEnd).toHaveLength(1)

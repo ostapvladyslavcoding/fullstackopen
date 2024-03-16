@@ -40,7 +40,7 @@ blogsRouter.delete('/:id', async (req, res) => {
   const blog = await Blog.findById(req.params.id)
 
   if (!blog) {
-    res.status(204).end()
+    res.status(200).end()
   }
 
   const user = req.user
@@ -54,7 +54,7 @@ blogsRouter.delete('/:id', async (req, res) => {
   await user.save()
   await blog.deleteOne()
 
-  res.status(204).end()
+  res.status(200).json(blog)
 })
 
 // blogsRouter.put('/:id', async (req, res) => {
