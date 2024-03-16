@@ -9,6 +9,7 @@ import {
   addLike,
   createBlog,
   initializeBlogs,
+  removeBlog,
 } from './reducers/blogsReducer.js'
 import { setNotification } from './reducers/notificationReducer.js'
 import blogService from './services/blogs'
@@ -65,49 +66,24 @@ const App = () => {
     try {
       blogFormRef.current.toggleVisibility()
       dispatch(createBlog(blogObject))
-
-      dispatch(
-        setNotification(
-          `Added "${blogObject.title}" by "${blogObject.author}"!`,
-          'info',
-          5
-        )
-      )
     } catch (error) {
       console.error(error)
-      dispatch(setNotification(`${error.response.data.error}`, 'error', 5))
     }
   }
 
-  const updateLikes = async (id, updatedBlog) => {
+  const updateLikes = async (id) => {
     try {
-      const res = await blogService.update(id, updatedBlog)
-
-      setBlogs(blogs.map((blog) => (blog.id === res.id ? res : blog)))
-      dispatch(setNotification(`Liked "${res.title}"!`, 'info', 5))
+      dispatch(addLike(id))
     } catch (error) {
       console.error(error)
-      dispatch(setNotification(`${error.response.data.error}`, 'error', 5))
     }
   }
 
   const deleteBlog = async (id) => {
     try {
-      const deletedBlog = blogs.find(
-        (blog) => id.toString() === blog.id.toString()
-      )
-      await blogService.remove(id)
-      setBlogs(blogs.filter((blog) => id.toString() !== blog.id.toString()))
-      dispatch(
-        setNotification(
-          `Deleted blog "${deletedBlog.title}" by "${deletedBlog.author}"!`,
-          'info',
-          5
-        )
-      )
+      dispatch(removeBlog(id))
     } catch (error) {
       console.error(error)
-      dispatch(setNotification(`${error.response.data.error}`, 'error', 5))
     }
   }
 
