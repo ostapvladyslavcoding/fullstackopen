@@ -11,15 +11,13 @@ import {
   initializeBlogs,
   removeBlog,
 } from './reducers/blogsReducer.js'
-import { setNotification } from './reducers/notificationReducer.js'
-import blogService from './services/blogs'
-import loginService from './services/login.js'
+import { clearUser, getUser, setUser } from './reducers/userReducer.js'
 
 const App = () => {
-  const blogs = useSelector((state) => state.blogs)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [user, setUser] = useState(null)
+  const blogs = useSelector((state) => state.blogs)
+  const user = useSelector((state) => state.user)
 
   const dispatch = useDispatch()
 
@@ -30,36 +28,22 @@ const App = () => {
   }, [dispatch])
 
   useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem('loggedBloglistappUser')
-    if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON)
-      setUser(user)
-      blogService.setToken(user.token)
-    }
-  }, [])
+    dispatch(getUser())
+  }, [dispatch])
 
   const handleLogin = async (e) => {
     e.preventDefault()
-
     try {
-      const user = await loginService.login({ username, password })
-
-      window.localStorage.setItem('loggedBloglistappUser', JSON.stringify(user))
-      blogService.setToken(user.token)
-      setUser(user)
+      dispatch(setUser(username, password))
       setUsername('')
       setPassword('')
-      dispatch(setNotification(`Logged in as "${user.name}"`, 'info', 5))
     } catch (error) {
       console.error(error)
-      dispatch(setNotification(`${error.response.data.error}`, 'error', 5))
     }
   }
 
   const handleLogout = () => {
-    window.localStorage.clear()
-    setUser(null)
-    dispatch(setNotification('Logged out', 'info', 5))
+    dispatch(clearUser())
   }
 
   const addBlog = async (blogObject) => {
