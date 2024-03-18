@@ -1,10 +1,12 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useNotificationDispatch } from '../NotificationContext'
 import blogService from '../services/blogs'
 import { setNotification } from './Notification'
+import Togglable from './Togglable'
 
 const BlogForm = () => {
+  const blogFormRef = useRef()
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
@@ -29,6 +31,7 @@ const BlogForm = () => {
 
   const addBlog = (event) => {
     event.preventDefault()
+    blogFormRef.current.toggleVisibility()
     newBlogMutation.mutate({ title, author, url })
 
     setTitle('')
@@ -37,7 +40,10 @@ const BlogForm = () => {
   }
 
   return (
-    <>
+    <Togglable
+      buttonLabel='new blog'
+      ref={blogFormRef}
+    >
       <h2>create new</h2>
       <form onSubmit={addBlog}>
         <div>
@@ -72,7 +78,7 @@ const BlogForm = () => {
         </div>
         <button type='submit'>create</button>
       </form>
-    </>
+    </Togglable>
   )
 }
 

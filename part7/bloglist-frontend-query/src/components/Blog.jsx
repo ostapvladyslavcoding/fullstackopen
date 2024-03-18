@@ -2,10 +2,12 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import PropTypes from 'prop-types'
 import { useState } from 'react'
 import { useNotificationDispatch } from '../NotificationContext'
+import { useUserValue } from '../UserContext'
 import blogService from '../services/blogs'
 import { setNotification } from './Notification'
 
-const Blog = ({ blog, currentUser }) => {
+const Blog = ({ blog }) => {
+  const currentUser = useUserValue()
   const dispatch = useNotificationDispatch()
   const queryClient = useQueryClient()
 
@@ -88,7 +90,7 @@ const Blog = ({ blog, currentUser }) => {
           <button onClick={() => handleLikeClick(blog)}>like</button>
         </p>
         <p>{blog.user.username}</p>
-        {blog.user.username === currentUser && (
+        {blog.user.username === currentUser.username && (
           <button onClick={() => handleDeleteClick(blog.id)}>delete</button>
         )}
       </div>
@@ -98,7 +100,6 @@ const Blog = ({ blog, currentUser }) => {
 
 Blog.propTypes = {
   blog: PropTypes.object.isRequired,
-  currentUser: PropTypes.string.isRequired,
 }
 
 export default Blog

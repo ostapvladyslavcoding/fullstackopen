@@ -1,21 +1,42 @@
-import { useQuery } from '@tanstack/react-query'
-import { useEffect, useRef, useState } from 'react'
+import { useMutation, useQuery } from '@tanstack/react-query'
+import { useContext, useEffect, useState } from 'react'
 
 import { useNotificationDispatch } from './NotificationContext'
+import UserContext from './UserContext'
 import Blog from './components/Blog'
 import BlogForm from './components/BlogForm.jsx'
-import Notification from './components/Notification'
-import Togglable from './components/Togglable'
+import Notification, { setNotification } from './components/Notification'
 import blogService from './services/blogs'
 import loginService from './services/login.js'
 
 const App = () => {
   const dispatch = useNotificationDispatch()
-
-  const blogFormRef = useRef()
+  const [user, dispatchUser] = useContext(UserContext)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [user, setUser] = useState(null)
+
+  useEffect(() => {
+    const loggedUserJSON = window.localStorage.getItem('loggedBloglistappUser')
+    if (loggedUserJSON) {
+      const user = JSON.parse(loggedUserJSON)
+      dispatchUser({ type: 'SET_USER', payload: user })
+      blogService.setToken(user.token)
+    }
+  }, [dispatchUser])
+
+  const loginMutation = useMutation({
+    mutationFn: loginService.login,
+    onSuccess: (user) => {
+      window.localStorage.setItem('loggedBloglistappUser', JSON.stringify(user))
+      blogService.setToken(user.token)
+      dispatchUser({ type: 'SET_USER', payload: user })
+      setNotification(dispatch, `Logged in as "${user.name}"`)
+    },
+    onError: (error) => {
+      console.error(error)
+      setNotification(dispatch, error.response.data.error, 'error')
+    },
+  })
 
   const result = useQuery({
     queryKey: ['blogs'],
@@ -23,15 +44,6 @@ const App = () => {
     retry: 1,
     refetchOnWindowFocus: false,
   })
-
-  useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem('loggedBloglistappUser')
-    if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON)
-      setUser(user)
-      blogService.setToken(user.token)
-    }
-  }, [])
 
   if (result.isLoading) {
     return <div>loading data...</div>
@@ -41,39 +53,17 @@ const App = () => {
   }
   const blogs = result.data ? result.data : []
 
-  const setNotification = (message, type = 'info', timer = 5) => {
-    dispatch({
-      type: 'SET_NOTIFICATION',
-      payload: {
-        message,
-        type,
-      },
-    })
-    setTimeout(() => {
-      dispatch({ type: 'CLEAR_NOTIFICATION' })
-    }, timer * 1000)
-  }
-
-  const handleLogin = async (e) => {
+  const handleLogin = (e) => {
     e.preventDefault()
-    try {
-      const user = await loginService.login({ username, password })
-      window.localStorage.setItem('loggedBloglistappUser', JSON.stringify(user))
-      blogService.setToken(user.token)
-      setUser(user)
-      setUsername('')
-      setPassword('')
-      setNotification(`Logged in as "${user.name}"`)
-    } catch (error) {
-      console.error(error)
-      setNotification(error.response.data.error, 'error')
-    }
+    loginMutation.mutate({ username, password })
+    setUsername('')
+    setPassword('')
   }
 
   const handleLogout = () => {
     window.localStorage.clear()
-    setUser(null)
-    setNotification('Logged out')
+    dispatchUser({ type: 'CLEAR_USER' })
+    setNotification(dispatch, 'Logged out')
   }
 
   const loginForm = () => (
@@ -118,12 +108,7 @@ const App = () => {
       <div style={{ display: 'inline' }}>{user.name} logged in</div>
       <button onClick={handleLogout}>logout</button>
 
-      <Togglable
-        buttonLabel='new blog'
-        ref={blogFormRef}
-      >
-        <BlogForm />
-      </Togglable>
+      <BlogForm />
 
       <h2>Blogs</h2>
       <div data-testid='parent'>
@@ -133,7 +118,6 @@ const App = () => {
             <Blog
               key={blog.id}
               blog={blog}
-              currentUser={user.username}
             />
           ))}
       </div>
