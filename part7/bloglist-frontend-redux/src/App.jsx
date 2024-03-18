@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Route, Routes } from 'react-router-dom'
+import { Link, Route, Routes } from 'react-router-dom'
 
 import BlogDetails from './components/BlogDetails.jsx'
 import BlogList from './components/BlogList.jsx'
@@ -26,13 +26,40 @@ const App = () => {
     return <LoginForm />
   }
 
+  const NavBar = () => {
+    const padding = {
+      paddingRight: 5,
+    }
+    const style = {
+      backgroundColor: 'lightgrey',
+      padding: 10,
+    }
+
+    return (
+      <div style={style}>
+        <Link
+          style={padding}
+          to='/blogs'
+        >
+          blogs
+        </Link>
+        <Link
+          style={padding}
+          to='/users'
+        >
+          users
+        </Link>
+        <span>{user.name} logged in </span>
+        <button onClick={handleLogout}>logout</button>
+      </div>
+    )
+  }
+
   return (
     <div>
+      <NavBar />
       <h2>blogs</h2>
       <Notification />
-      <div style={{ display: 'inline' }}>{user.name} logged in</div>
-      <button onClick={handleLogout}>logout</button>
-
       <Routes>
         <Route
           path='/'
