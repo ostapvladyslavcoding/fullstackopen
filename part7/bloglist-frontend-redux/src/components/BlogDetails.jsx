@@ -21,22 +21,14 @@ const BlogDetails = ({ currentUser }) => {
     return <h2>Blog not found or loading...</h2>
   }
 
-  const updateLikes = async (blog) => {
-    try {
-      dispatch(addLikeDetails(blog))
-    } catch (error) {
-      console.error(error)
-    }
+  const updateLikes = (blog) => {
+    dispatch(addLikeDetails(blog))
   }
 
-  const deleteBlog = async (blog) => {
-    try {
-      if (window.confirm(`Remove blog "${blog.title}" by "${blog.author}"?`)) {
-        dispatch(removeBlog(blog.id))
-        navigate('/')
-      }
-    } catch (error) {
-      console.error(error)
+  const deleteBlog = (blog) => {
+    if (window.confirm(`Remove blog "${blog.title}" by "${blog.author}"?`)) {
+      dispatch(removeBlog(blog.id))
+      navigate('/')
     }
   }
 
@@ -56,6 +48,14 @@ const BlogDetails = ({ currentUser }) => {
       {blog.user.username === currentUser && (
         <button onClick={() => deleteBlog(blog)}>delete</button>
       )}
+
+      <h3>Comments</h3>
+
+      <ul>
+        {blog.comments.map((comment, index) => (
+          <li key={index}>{comment}</li>
+        ))}
+      </ul>
     </>
   )
 }
