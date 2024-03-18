@@ -12,7 +12,6 @@ import Togglable from './Togglable'
 
 const Blogs = () => {
   const blogs = useSelector((state) => state.blogs)
-  const user = useSelector((state) => state.user)
   const blogFormRef = useRef()
   const dispatch = useDispatch()
 
@@ -24,22 +23,6 @@ const Blogs = () => {
     try {
       blogFormRef.current.toggleVisibility()
       dispatch(createBlog(blogObject))
-    } catch (error) {
-      console.error(error)
-    }
-  }
-
-  const updateLikes = async (id) => {
-    try {
-      dispatch(addLike(id))
-    } catch (error) {
-      console.error(error)
-    }
-  }
-
-  const deleteBlog = async (id) => {
-    try {
-      dispatch(removeBlog(id))
     } catch (error) {
       console.error(error)
     }
@@ -62,9 +45,6 @@ const Blogs = () => {
             <Blog
               key={blog.id}
               blog={blog}
-              updateLikes={updateLikes}
-              deleteBlog={deleteBlog}
-              currentUser={user.username}
             />
           ))}
       </div>

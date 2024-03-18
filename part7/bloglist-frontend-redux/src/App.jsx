@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Route, Routes } from 'react-router-dom'
 
+import BlogView from './components/BlogView.jsx'
 import Blogs from './components/Blogs.jsx'
 import Notification from './components/Notification'
 import User from './components/User.jsx'
@@ -74,12 +75,20 @@ const App = () => {
           element={<Blogs />}
         />
         <Route
+          path='/blogs'
+          element={<Blogs />}
+        />
+        <Route
           path='/users'
           element={<Users />}
         />
         <Route
           path='/users/:id'
           element={<User />}
+        />
+        <Route
+          path='/blogs/:id'
+          element={<BlogView currentUser={user.username} />}
         />
       </Routes>
     </div>

@@ -80,6 +80,7 @@ export const addLike = (id) => {
         )
       )
     } catch (error) {
+      console.error(error)
       dispatch(setNotification(`${error.response.data.error}`, 'error', 5))
     }
   }
