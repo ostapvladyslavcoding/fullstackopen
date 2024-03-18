@@ -4,6 +4,7 @@ import { Route, Routes } from 'react-router-dom'
 
 import Blogs from './components/Blogs.jsx'
 import Notification from './components/Notification'
+import User from './components/User.jsx'
 import Users from './components/Users.jsx'
 import { clearUser, getUser, setUser } from './reducers/loginReducer.js'
 
@@ -75,6 +76,10 @@ const App = () => {
         <Route
           path='/users'
           element={<Users />}
+        />
+        <Route
+          path='/users/:id'
+          element={<User />}
         />
       </Routes>
     </div>
