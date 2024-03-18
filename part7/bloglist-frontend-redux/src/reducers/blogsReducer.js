@@ -34,6 +34,7 @@ export const initializeBlogs = () => {
       dispatch(set(blogs))
     } catch (error) {
       console.error(error)
+      dispatch(setNotification('Error initializing blogs', 'error', 5))
     }
   }
 }
@@ -97,7 +98,6 @@ export const removeBlog = (id) => {
         )
       )
     } catch (error) {
-      console.log('HALLO')
       dispatch(setNotification(`${error.response.data.error}`, 'error', 5))
     }
   }
