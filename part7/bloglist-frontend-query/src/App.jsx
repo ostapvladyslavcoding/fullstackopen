@@ -1,16 +1,19 @@
 import { useEffect, useRef, useState } from 'react'
+
+import { useNotificationDispatch } from './NotificationContext'
 import Blog from './components/Blog'
 import BlogForm from './components/BlogForm.jsx'
+import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/login.js'
 
 const App = () => {
+  const dispatch = useNotificationDispatch()
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [info, setInfo] = useState({ message: null })
 
   const blogFormRef = useRef()
 
@@ -27,47 +30,39 @@ const App = () => {
     }
   }, [])
 
-  const infoMessage = (message, type = 'info') => {
-    setInfo({
-      message,
-      type,
+  const setNotification = (message, type = 'info', timer = 5) => {
+    dispatch({
+      type: 'SET_NOTIFICATION',
+      payload: {
+        message,
+        type,
+      },
     })
-
     setTimeout(() => {
-      setInfo({ message: null })
-    }, 5000)
-  }
-
-  const Notification = ({ info }) => {
-    if (!info.message) {
-      return
-    }
-
-    return <div className={info.type}>{info.message}</div>
+      dispatch({ type: 'CLEAR_NOTIFICATION' })
+    }, timer * 1000)
   }
 
   const handleLogin = async (e) => {
     e.preventDefault()
-
     try {
       const user = await loginService.login({ username, password })
-
       window.localStorage.setItem('loggedBloglistappUser', JSON.stringify(user))
       blogService.setToken(user.token)
       setUser(user)
       setUsername('')
       setPassword('')
-      infoMessage(`Logged in as "${user.name}"`)
+      setNotification(`Logged in as "${user.name}"`)
     } catch (error) {
       console.error(error)
-      infoMessage(error.response.data.error, 'error')
+      setNotification(error.response.data.error, 'error')
     }
   }
 
   const handleLogout = () => {
     window.localStorage.clear()
     setUser(null)
-    infoMessage('Logged out')
+    setNotification('Logged out')
   }
 
   const addBlog = async (blogObject) => {
@@ -76,10 +71,10 @@ const App = () => {
       const newBlog = await blogService.create(blogObject)
       setBlogs(blogs.concat(newBlog))
 
-      infoMessage(`Added "${blogObject.title}" by "${blogObject.author}"!`)
+      setNotification(`Added "${blogObject.title}" by "${blogObject.author}"!`)
     } catch (error) {
       console.error(error)
-      infoMessage(error.response.data.error, 'error')
+      setNotification(error.response.data.error, 'error')
     }
   }
 
@@ -88,21 +83,23 @@ const App = () => {
       const res = await blogService.update(id, updatedBlog)
 
       setBlogs(blogs.map((blog) => (blog.id === res.id ? res : blog)))
-      infoMessage(`Liked "${res.title}"!`)
+      setNotification(`Liked "${res.title}" by "${res.author}"!`)
     } catch (error) {
       console.error(error)
-      infoMessage(error.response.data.error, 'error')
+      setNotification(error.response.data.error, 'error')
     }
   }
 
   const deleteBlog = async (id) => {
     try {
-      await blogService.remove(id)
+      const removedBlog = await blogService.remove(id)
       setBlogs(blogs.filter((blog) => id.toString() !== blog.id.toString()))
-      infoMessage('Deleted blog!')
+      setNotification(
+        `Deleted blog "${removedBlog.title}" by "${removedBlog.author}!`
+      )
     } catch (error) {
       console.error(error)
-      infoMessage(error.response.data.error, 'error')
+      setNotification(error.response.data.error, 'error')
     }
   }
 
@@ -110,7 +107,7 @@ const App = () => {
     return (
       <div>
         <h2>Log in to application</h2>
-        <Notification info={info} />
+        <Notification />
         <form onSubmit={handleLogin}>
           <div>
             username
@@ -141,7 +138,7 @@ const App = () => {
   return (
     <div>
       <h2>blogs</h2>
-      <Notification info={info} />
+      <Notification />
       <div style={{ display: 'inline' }}>{user.name} logged in</div>
       <button onClick={handleLogout}>logout</button>
 
