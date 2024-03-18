@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
 import {
   addLikeDetails,
+  addNewComment,
   initializeBlogDetails,
 } from '../reducers/blogDetailsReducer.js'
 import { removeBlog } from '../reducers/blogsReducer.js'
@@ -32,6 +33,13 @@ const BlogDetails = ({ currentUser }) => {
     }
   }
 
+  const addComment = (e) => {
+    e.preventDefault()
+    const comment = e.target.addComment.value
+    e.target.addComment.value = ''
+    dispatch(addNewComment(blog, comment))
+  }
+
   return (
     <>
       <h2>
@@ -50,6 +58,11 @@ const BlogDetails = ({ currentUser }) => {
       )}
 
       <h3>Comments</h3>
+
+      <form onSubmit={addComment}>
+        <input name='addComment' />
+        <button>add comment</button>
+      </form>
 
       <ul>
         {blog.comments.map((comment, index) => (

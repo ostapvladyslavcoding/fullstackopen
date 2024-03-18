@@ -55,6 +55,25 @@ export const addLikeDetails = (blog) => {
   }
 }
 
+export const addNewComment = (blog, comment) => {
+  return async (dispatch) => {
+    try {
+      const updatedBlog = await blogService.addComment(blog.id, comment)
+      dispatch(updateDetails(updatedBlog))
+      dispatch(
+        setNotification(
+          `Commented on "${updatedBlog.title}" by "${updatedBlog.author}"!`,
+          'info',
+          5
+        )
+      )
+    } catch (error) {
+      console.error(error)
+      dispatch(setNotification(`${error.response.data.error}`, 'error', 5))
+    }
+  }
+}
+
 export const { setDetails, updateDetails, clearDetails } =
   blogDetailsSlice.actions
 export default blogDetailsSlice.reducer
