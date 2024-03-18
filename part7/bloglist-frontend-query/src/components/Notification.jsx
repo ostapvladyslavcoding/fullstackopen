@@ -1,5 +1,23 @@
 import { useNotificationValue } from '../NotificationContext'
 
+export const setNotification = (
+  dispatch,
+  message,
+  type = 'info',
+  timer = 5
+) => {
+  dispatch({
+    type: 'SET_NOTIFICATION',
+    payload: {
+      message,
+      type,
+    },
+  })
+  setTimeout(() => {
+    dispatch({ type: 'CLEAR_NOTIFICATION' })
+  }, timer * 1000)
+}
+
 const Notification = () => {
   const notification = useNotificationValue()
   const style = {
