@@ -21,11 +21,11 @@ const create = async (newObject) => {
   return res.data
 }
 
-const update = async (id, newObject) => {
+const update = async (newObject) => {
   const config = {
     headers: { Authorization: token },
   }
-  const res = await axios.put(`${baseUrl}/${id}`, newObject, config)
+  const res = await axios.put(`${baseUrl}/${newObject.id}`, newObject, config)
   return res.data
 }
 

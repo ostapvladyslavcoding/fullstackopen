@@ -76,30 +76,6 @@ const App = () => {
     setNotification('Logged out')
   }
 
-  const updateLikes = async (id, updatedBlog) => {
-    // try {
-    //   const res = await blogService.update(id, updatedBlog)
-    //   setBlogs(blogs.map((blog) => (blog.id === res.id ? res : blog)))
-    //   setNotification(`Liked "${res.title}" by "${res.author}"!`)
-    // } catch (error) {
-    //   console.error(error)
-    //   setNotification(error.response.data.error, 'error')
-    // }
-  }
-
-  const deleteBlog = async (id) => {
-    // try {
-    //   const removedBlog = await blogService.remove(id)
-    //   setBlogs(blogs.filter((blog) => id.toString() !== blog.id.toString()))
-    //   setNotification(
-    //     `Deleted blog "${removedBlog.title}" by "${removedBlog.author}!`
-    //   )
-    // } catch (error) {
-    //   console.error(error)
-    //   setNotification(error.response.data.error, 'error')
-    // }
-  }
-
   const loginForm = () => (
     <div>
       <h2>Log in to application</h2>
@@ -157,8 +133,6 @@ const App = () => {
             <Blog
               key={blog.id}
               blog={blog}
-              updateLikes={updateLikes}
-              deleteBlog={deleteBlog}
               currentUser={user.username}
             />
           ))}
