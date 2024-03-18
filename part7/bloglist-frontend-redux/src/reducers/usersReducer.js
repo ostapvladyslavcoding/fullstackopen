@@ -4,13 +4,10 @@ import { setNotification } from './notificationReducer'
 
 const userSlice = createSlice({
   name: 'users',
-  initialState: null,
+  initialState: [],
   reducers: {
     set(state, action) {
       return action.payload
-    },
-    clear(state, action) {
-      return null
     },
   },
 })
@@ -27,5 +24,5 @@ export const initializeUsers = () => {
   }
 }
 
-export const { set, clear } = userSlice.actions
+export const { set } = userSlice.actions
 export default userSlice.reducer

@@ -1,22 +1,19 @@
 import { useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import {
-  addLike,
-  createBlog,
-  initializeBlogs,
-  removeBlog,
-} from '../reducers/blogsReducer'
-import Blog from './Blog'
+import { Link } from 'react-router-dom'
+import { clearDetails } from '../reducers/blogDetailsReducer'
+import { createBlog, initializeBlogs } from '../reducers/blogsReducer'
 import BlogForm from './BlogForm'
 import Togglable from './Togglable'
 
-const Blogs = () => {
+const BlogList = () => {
   const blogs = useSelector((state) => state.blogs)
-  const blogFormRef = useRef()
   const dispatch = useDispatch()
+  const blogFormRef = useRef()
 
   useEffect(() => {
     dispatch(initializeBlogs())
+    dispatch(clearDetails())
   }, [dispatch])
 
   const addBlog = async (blogObject) => {
@@ -26,6 +23,29 @@ const Blogs = () => {
     } catch (error) {
       console.error(error)
     }
+  }
+
+  const Blog = ({ blog }) => {
+    const blogStyle = {
+      paddingTop: 10,
+      paddingLeft: 2,
+      border: 'solid',
+      borderWidth: 1,
+      marginBottom: 5,
+    }
+
+    return (
+      <div
+        title='blog'
+        style={blogStyle}
+      >
+        <span>
+          <Link to={`/blogs/${blog.id}`}>
+            {blog.title} {blog.author}
+          </Link>
+        </span>
+      </div>
+    )
   }
 
   return (
@@ -52,4 +72,4 @@ const Blogs = () => {
   )
 }
 
-export default Blogs
+export default BlogList

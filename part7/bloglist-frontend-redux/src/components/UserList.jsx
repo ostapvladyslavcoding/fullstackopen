@@ -1,19 +1,17 @@
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
+import { clearDetails } from '../reducers/userDetailsReducer.js'
 import { initializeUsers } from '../reducers/usersReducer.js'
 
-const Users = () => {
-  const dispatch = useDispatch()
+const UserList = () => {
   const users = useSelector((state) => state.users)
+  const dispatch = useDispatch()
 
   useEffect(() => {
     dispatch(initializeUsers())
+    dispatch(clearDetails())
   }, [dispatch])
-
-  if (users === null) {
-    return null
-  }
 
   return (
     <>
@@ -26,7 +24,7 @@ const Users = () => {
           </tr>
         </thead>
         <tbody>
-          {users.map((user) => (
+          {[...users].map((user) => (
             <tr key={user.id}>
               <td>
                 <Link to={`/users/${user.id}`}>{user.name}</Link>
@@ -40,4 +38,4 @@ const Users = () => {
   )
 }
 
-export default Users
+export default UserList
