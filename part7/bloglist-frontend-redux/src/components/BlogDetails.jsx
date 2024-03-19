@@ -1,6 +1,10 @@
+import { Button, Link, Paper, TextField } from '@mui/material'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
+
+import SendIcon from '@mui/icons-material/Send'
+import ThumbUpIcon from '@mui/icons-material/ThumbUp'
 import {
   addLikeDetails,
   addNewComment,
@@ -42,33 +46,81 @@ const BlogDetails = ({ currentUser }) => {
 
   return (
     <>
-      <h2>
-        {blog.title} {blog.author}
-      </h2>
-      <p>
-        <a href={blog.url}>{blog.url}</a>
-      </p>
-      <p>
-        {blog.likes} likes
-        <button onClick={() => updateLikes(blog)}>like</button>
-      </p>
-      <p>added by {blog.user.name}</p>
-      {blog.user.username === currentUser && (
-        <button onClick={() => deleteBlog(blog)}>delete</button>
-      )}
+      <Paper
+        elevation={1}
+        sx={{ padding: '15px', marginTop: '15px' }}
+      >
+        <h2>
+          {blog.title} {blog.author}
+        </h2>
 
-      <h3>Comments</h3>
+        <p>
+          <Link
+            href='#'
+            color='inherit'
+            variant='body2'
+            underline='always'
+          >
+            {blog.url}
+          </Link>
+        </p>
+        <p>
+          {blog.likes} likes
+          <Button
+            variant='contained'
+            color='secondary'
+            size='small'
+            onClick={() => updateLikes(blog)}
+            endIcon={<ThumbUpIcon />}
+          >
+            like
+          </Button>
+        </p>
+        <p>added by {blog.user.name}</p>
+        {blog.user.username === currentUser && (
+          <Button
+            variant='contained'
+            color='error'
+            onClick={() => deleteBlog(blog)}
+          >
+            delete
+          </Button>
+        )}
 
-      <form onSubmit={addComment}>
-        <input name='addComment' />
-        <button>add comment</button>
-      </form>
+        <Paper
+          elevation={3}
+          sx={{ padding: '10px' }}
+        >
+          <h3>Comments</h3>
 
-      <ul>
-        {blog.comments.map((comment, index) => (
-          <li key={index}>{comment}</li>
-        ))}
-      </ul>
+          <form onSubmit={addComment}>
+            <TextField
+              name='addComment'
+              label='add comment'
+              size='small'
+            />
+            <Button
+              type='submit'
+              variant='contained'
+              size='large'
+              endIcon={<SendIcon />}
+            >
+              Send
+            </Button>
+          </form>
+
+          <div>
+            {blog.comments.map((comment, index) => (
+              <Paper
+                key={index}
+                sx={{ padding: '10px', margin: '5px' }}
+              >
+                <p>{comment}</p>
+              </Paper>
+            ))}
+          </div>
+        </Paper>
+      </Paper>
     </>
   )
 }

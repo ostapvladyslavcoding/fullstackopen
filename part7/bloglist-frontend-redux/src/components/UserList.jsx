@@ -1,3 +1,12 @@
+import {
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+} from '@mui/material'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
@@ -16,24 +25,30 @@ const UserList = () => {
   return (
     <>
       <h2>Users</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Names</th>
-            <th>Number of Blogs</th>
-          </tr>
-        </thead>
-        <tbody>
-          {[...users].map((user) => (
-            <tr key={user.id}>
-              <td>
-                <Link to={`/users/${user.id}`}>{user.name}</Link>
-              </td>
-              <td>{user.blogs.length}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+
+      <TableContainer component={Paper}>
+        <Table sx={{ minWidth: 250 }}>
+          <TableHead sx={{ backgroundColor: 'lightgray' }}>
+            <TableRow>
+              <TableCell>Names</TableCell>
+              <TableCell align='right'>Number of Blogs</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {[...users].map((user) => (
+              <TableRow
+                key={user.id}
+                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+              >
+                <TableCell>
+                  <Link to={`/users/${user.id}`}>{user.name}</Link>
+                </TableCell>
+                <TableCell align='right'>{user.blogs.length}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
     </>
   )
 }

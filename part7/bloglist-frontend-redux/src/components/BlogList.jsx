@@ -1,3 +1,4 @@
+import { List, ListItem, Paper } from '@mui/material'
 import { useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
@@ -26,48 +27,43 @@ const BlogList = () => {
   }
 
   const Blog = ({ blog }) => {
-    const blogStyle = {
-      paddingTop: 10,
-      paddingLeft: 2,
-      border: 'solid',
-      borderWidth: 1,
-      marginBottom: 5,
-    }
-
     return (
-      <div
-        title='blog'
-        style={blogStyle}
-      >
-        <span>
-          <Link to={`/blogs/${blog.id}`}>
-            {blog.title} {blog.author}
-          </Link>
-        </span>
+      <div title='blog'>
+        <List>
+          <ListItem
+            divider
+            disableGutters
+          >
+            <Link to={`/blogs/${blog.id}`}>
+              {blog.title} {blog.author}
+            </Link>
+          </ListItem>
+        </List>
       </div>
     )
   }
 
   return (
     <>
+      <h2>Blogs</h2>
       <Togglable
         buttonLabel='new blog'
         ref={blogFormRef}
       >
         <BlogForm createBlog={addBlog} />
       </Togglable>
-
-      <h2>Blogs</h2>
-      <div data-testid='parent'>
-        {[...blogs]
-          .sort((a, b) => b.likes - a.likes)
-          .map((blog) => (
-            <Blog
-              key={blog.id}
-              blog={blog}
-            />
-          ))}
-      </div>
+      <Paper sx={{ padding: '10px', marginTop: '10px' }}>
+        <div data-testid='parent'>
+          {[...blogs]
+            .sort((a, b) => b.likes - a.likes)
+            .map((blog) => (
+              <Blog
+                key={blog.id}
+                blog={blog}
+              />
+            ))}
+        </div>
+      </Paper>
     </>
   )
 }

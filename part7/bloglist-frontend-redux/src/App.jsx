@@ -1,3 +1,4 @@
+import { AppBar, Button, Container, Toolbar, Typography } from '@mui/material'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link, Route, Routes } from 'react-router-dom'
@@ -23,43 +24,65 @@ const App = () => {
   }
 
   if (user === null) {
-    return <LoginForm />
+    return (
+      <Container>
+        <LoginForm />
+      </Container>
+    )
   }
 
   const NavBar = () => {
-    const padding = {
-      paddingRight: 5,
-    }
-    const style = {
-      backgroundColor: 'lightgrey',
-      padding: 10,
-    }
-
     return (
-      <div style={style}>
-        <Link
-          style={padding}
-          to='/blogs'
-        >
-          blogs
-        </Link>
-        <Link
-          style={padding}
-          to='/users'
-        >
-          users
-        </Link>
-        <span>{user.name} logged in </span>
-        <button onClick={handleLogout}>logout</button>
-      </div>
+      <AppBar position='static'>
+        <Toolbar>
+          <Button
+            color='inherit'
+            component={Link}
+            to='/blogs'
+          >
+            blogs
+          </Button>
+          <Button
+            color='inherit'
+            component={Link}
+            to='/users'
+          >
+            users
+          </Button>
+          {user ? (
+            <>
+              <Typography
+                variant='body1'
+                sx={{ marginLeft: 'auto', whiteSpace: 'pre' }}
+              >
+                {user.username} logged in{' '}
+              </Typography>
+              <Button
+                onClick={handleLogout}
+                variant='contained'
+                color='secondary'
+              >
+                logout
+              </Button>
+            </>
+          ) : (
+            <Button
+              color='inherit'
+              component={Link}
+              to='/login'
+            >
+              login
+            </Button>
+          )}
+        </Toolbar>
+      </AppBar>
     )
   }
 
   return (
-    <div>
-      <NavBar />
-      <h2>blogs</h2>
+    <Container>
       <Notification />
+      <NavBar />
       <Routes>
         <Route
           path='/'
@@ -82,7 +105,7 @@ const App = () => {
           element={<BlogDetails currentUser={user.username} />}
         />
       </Routes>
-    </div>
+    </Container>
   )
 }
 

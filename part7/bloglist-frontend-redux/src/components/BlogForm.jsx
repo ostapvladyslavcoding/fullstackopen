@@ -1,3 +1,5 @@
+import SendIcon from '@mui/icons-material/Send'
+import { Button, TextField } from '@mui/material'
 import { useState } from 'react'
 
 const BlogForm = ({ createBlog }) => {
@@ -19,36 +21,38 @@ const BlogForm = ({ createBlog }) => {
       <h2>create new</h2>
       <form onSubmit={addBlog}>
         <div>
-          title:
-          <input
-            data-testid='title'
+          <TextField
+            label='title'
             value={title}
             onChange={({ target }) => setTitle(target.value)}
             name='Title'
-            placeholder='enter title here'
+            required
           />
         </div>
         <div>
-          author:
-          <input
-            data-testid='author'
+          <TextField
+            label='author'
             value={author}
             onChange={({ target }) => setAuthor(target.value)}
             name='Author'
-            placeholder='enter author here'
           />
         </div>
         <div>
-          url:
-          <input
-            data-testid='url'
+          <TextField
+            required
+            label='url'
             value={url}
             onChange={({ target }) => setUrl(target.value)}
             name='Url'
-            placeholder='enter url here'
           />
         </div>
-        <button type='submit'>create</button>
+        <Button
+          type='submit'
+          variant='contained'
+          endIcon={<SendIcon />}
+        >
+          create
+        </Button>
       </form>
     </>
   )

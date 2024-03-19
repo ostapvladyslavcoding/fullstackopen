@@ -1,3 +1,4 @@
+import { Button, TextField } from '@mui/material'
 import { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { setUser } from '../reducers/loginReducer'
@@ -19,10 +20,11 @@ const LoginForm = () => {
     <div>
       <h2>Log in to application</h2>
       <Notification />
+
       <form onSubmit={handleLogin}>
         <div>
-          username
-          <input
+          <TextField
+            label='username'
             data-testid='username'
             type='text'
             value={username}
@@ -31,8 +33,8 @@ const LoginForm = () => {
           />
         </div>
         <div>
-          password
-          <input
+          <TextField
+            label='password'
             data-testid='password'
             type='password'
             value={password}
@@ -40,7 +42,15 @@ const LoginForm = () => {
             onChange={({ target }) => setPassword(target.value)}
           />
         </div>
-        <button type='submit'>login</button>
+        <div>
+          <Button
+            variant='contained'
+            color='primary'
+            type='submit'
+          >
+            login
+          </Button>
+        </div>
       </form>
     </div>
   )
