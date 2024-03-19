@@ -1,0 +1,10 @@
+POST http://localhost:3003/api/blogs/652882748ebcbcedd2718e39/comments
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3QyIiwiaWQiOiI2NTI3MmExYTkxNzc4MzJkN2U5YjJlNjYiLCJpYXQiOjE3MTA4MDA1ODYsImV4cCI6MTcxMDgwNDE4Nn0.kkbneheZxJH46zlKqiqcrf8xWVHhoOOiAUu9kFn1LRk
+
+
+{
+  "comment": "Hello new comment"
+}
+###
+GET http://localhost:3003/api/blogs/652882748ebcbcedd2718e39
