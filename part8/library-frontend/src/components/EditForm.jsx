@@ -2,7 +2,7 @@ import { useMutation } from '@apollo/client'
 import { useEffect, useState } from 'react'
 import { ALL_AUTHORS, EDIT_AUTHOR } from '../queries'
 
-const EditForm = () => {
+const EditForm = ({ authors }) => {
   const [name, setName] = useState('')
   const [born, setBorn] = useState('')
 
@@ -21,7 +21,7 @@ const EditForm = () => {
 
   useEffect(() => {
     if (result.data && result.data.editAuthor === null) {
-      console.error('person not found')
+      console.error('Author not found!')
     }
   }, [result.data])
 
@@ -31,10 +31,20 @@ const EditForm = () => {
       <form onSubmit={submit}>
         <div>
           name
-          <input
+          <select
             value={name}
             onChange={({ target }) => setName(target.value)}
-          />
+          >
+            <option value=''>Select author</option>
+            {authors.map((a) => (
+              <option
+                key={a.name}
+                value={a.name}
+              >
+                {a.name}
+              </option>
+            ))}
+          </select>
         </div>
 
         <div>
