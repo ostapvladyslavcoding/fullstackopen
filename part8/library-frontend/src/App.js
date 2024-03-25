@@ -23,61 +23,68 @@ const App = () => {
     client.resetStore()
   }
 
+  const NavBar = () => (
+    <div>
+      <Link to='/'>
+        <button>authors</button>
+      </Link>
+      <Link to='/books'>
+        <button>books</button>
+      </Link>
+      {token && (
+        <Link to='/add_book'>
+          <button>add book</button>
+        </Link>
+      )}
+      {token ? (
+        <button onClick={logout}>logout </button>
+      ) : (
+        <Link to='/login'>
+          <button>login</button>
+        </Link>
+      )}
+    </div>
+  )
+
+  const RouteDisplay = () => (
+    <Routes>
+      <Route
+        path='/'
+        element={
+          <Authors
+            token={token}
+            authors={authors.data.allAuthors}
+          />
+        }
+      />
+      <Route
+        path='/books'
+        element={<Books books={books.data.allBooks} />}
+      />
+      <Route
+        path='/add_book'
+        element={
+          token ? (
+            <NewBook />
+          ) : (
+            <Navigate
+              replace
+              to='/login'
+            />
+          )
+        }
+      />
+      <Route
+        path='/login'
+        element={<LoginForm setToken={setToken} />}
+      />
+    </Routes>
+  )
+
   return (
     <div>
-      <div>
-        <Link to='/'>
-          <button>authors</button>
-        </Link>
-        <Link to='/books'>
-          <button>books</button>
-        </Link>
-        {token && (
-          <Link to='/add_book'>
-            <button>add book</button>
-          </Link>
-        )}
-        {token ? (
-          <button onClick={logout}>logout </button>
-        ) : (
-          <Link to='/login'>
-            <button>login</button>
-          </Link>
-        )}
-      </div>
-
-      <Routes>
-        <Route
-          path='/'
-          element={
-            <Authors
-              token={token}
-              authors={authors.data.allAuthors}
-            />
-          }
-        />
-        <Route
-          path='/books'
-          element={<Books books={books.data.allBooks} />}
-        />
-        <Route
-          path='/add_book'
-          element={
-            token ? (
-              <NewBook />
-            ) : (
-              <Navigate
-                replace
-                to='/login'
-              />
-            )
-          }
-        />
-        <Route
-          path='/login'
-          element={<LoginForm setToken={setToken} />}
-        />
-      </Routes>
+      <NavBar />
+      <RouteDisplay />
     </div>
   )
 }
