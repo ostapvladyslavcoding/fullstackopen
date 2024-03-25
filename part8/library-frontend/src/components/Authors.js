@@ -1,10 +1,6 @@
 import EditForm from './EditForm'
 
-const Authors = ({ show, authors }) => {
-  if (!show) {
-    return null
-  }
-
+const Authors = ({ authors }) => {
   return (
     <div>
       <h2>authors</h2>

@@ -1,39 +1,83 @@
-import { useQuery } from '@apollo/client'
+import { useApolloClient, useQuery } from '@apollo/client'
 import { useState } from 'react'
+import { Link, Navigate, Route, Routes } from 'react-router-dom'
 import Authors from './components/Authors'
 import Books from './components/Books'
+import LoginForm from './components/LoginForm'
 import NewBook from './components/NewBook'
 import { ALL_AUTHORS, ALL_BOOKS } from './queries'
 
 const App = () => {
-  const [page, setPage] = useState('authors')
-
+  const [token, setToken] = useState(localStorage.getItem('library-user-token'))
   const authors = useQuery(ALL_AUTHORS)
   const books = useQuery(ALL_BOOKS)
+  const client = useApolloClient()
 
   if (authors.loading || books.loading) {
     return <div>loading...</div>
   }
 
+  const logout = () => {
+    setToken(null)
+    localStorage.clear()
+    client.resetStore()
+  }
+
   return (
     <div>
       <div>
-        <button onClick={() => setPage('authors')}>authors</button>
-        <button onClick={() => setPage('books')}>books</button>
-        <button onClick={() => setPage('add')}>add book</button>
+        <Link to='/'>
+          <button>authors</button>
+        </Link>
+        <Link to='/books'>
+          <button>books</button>
+        </Link>
+        {token && (
+          <Link to='/add_book'>
+            <button>add book</button>
+          </Link>
+        )}
+        {token ? (
+          <button onClick={logout}>logout </button>
+        ) : (
+          <Link to='/login'>
+            <button>login</button>
+          </Link>
+        )}
       </div>
 
-      <Authors
-        show={page === 'authors'}
-        authors={authors.data.allAuthors}
-      />
-
-      <Books
-        show={page === 'books'}
-        books={books.data.allBooks}
-      />
-
-      <NewBook show={page === 'add'} />
+      <Routes>
+        <Route
+          path='/'
+          element={
+            <Authors
+              token={token}
+              authors={authors.data.allAuthors}
+            />
+          }
+        />
+        <Route
+          path='/books'
+          element={<Books books={books.data.allBooks} />}
+        />
+        <Route
+          path='/add_book'
+          element={
+            token ? (
+              <NewBook />
+            ) : (
+              <Navigate
+                replace
+                to='/login'
+              />
+            )
+          }
+        />
+        <Route
+          path='/login'
+          element={<LoginForm setToken={setToken} />}
+        />
+      </Routes>
     </div>
   )
 }
