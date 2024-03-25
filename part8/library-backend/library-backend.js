@@ -1,10 +1,12 @@
-require('dotenv').config()
 const { ApolloServer } = require('@apollo/server')
 const { startStandaloneServer } = require('@apollo/server/standalone')
+const { GraphQLError } = require('graphql')
+
 const mongoose = require('mongoose')
 mongoose.set('strictQuery', false)
 const Author = require('./models/author')
 const Book = require('./models/book')
+require('dotenv').config()
 
 const MONGODB_URI = process.env.MONGODB_URI
 
@@ -81,12 +83,24 @@ const resolvers = {
     addBook: async (root, args) => {
       let author = await Author.findOne({ name: args.author })
       if (!author) {
-        author = new Author({ name: args.author })
-        await author.save()
+        try {
+          author = await Author.create({ name: args.author })
+        } catch (error) {
+          throw new GraphQLError('Author name is too short', {
+            extensions: { code: 'BAD_USER_INPUT' },
+            invalidArgs: args.author,
+          })
+        }
       }
-      const book = new Book({ ...args, author: author._id })
-      await book.save()
-      return await book.populate('author')
+      try {
+        const book = await Book.create({ ...args, author: author._id })
+        return book.populate('author')
+      } catch (error) {
+        throw new GraphQLError('Book title is too short or not unique', {
+          extensions: { code: 'BAD_USER_INPUT' },
+          invalidArgs: args.title,
+        })
+      }
     },
     editAuthor: async (root, args) => {
       const author = await Author.findOne({ name: args.name })
@@ -94,12 +108,22 @@ const resolvers = {
         return null
       }
 
-      const updatedAuthor = await Author.findByIdAndUpdate(
-        author.id,
-        { born: args.setBornTo },
-        { new: true }
-      )
-      return updatedAuthor
+      try {
+        const updatedAuthor = await Author.findByIdAndUpdate(
+          author.id,
+          { born: args.setBornTo },
+          { new: true }
+        )
+        return updatedAuthor
+      } catch (error) {
+        throw new GraphQLError('Updating author failed', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+            invalidArgs: args.name,
+            error,
+          },
+        })
+      }
     },
   },
 }
