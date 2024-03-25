@@ -5,6 +5,7 @@ import Authors from './components/Authors'
 import Books from './components/Books'
 import LoginForm from './components/LoginForm'
 import NewBook from './components/NewBook'
+import Recommendations from './components/Recommendations'
 import { ALL_AUTHORS, ALL_BOOKS } from './queries'
 
 const App = () => {
@@ -32,9 +33,15 @@ const App = () => {
         <button>books</button>
       </Link>
       {token && (
-        <Link to='/add_book'>
-          <button>add book</button>
-        </Link>
+        <>
+          <Link to='/add_book'>
+            <button>add book</button>
+          </Link>
+
+          <Link to='/recommend'>
+            <button>recommend</button>
+          </Link>
+        </>
       )}
       {token ? (
         <button onClick={logout}>logout </button>
@@ -77,6 +84,20 @@ const App = () => {
       <Route
         path='/login'
         element={<LoginForm setToken={setToken} />}
+      />
+
+      <Route
+        path='/recommend'
+        element={
+          token ? (
+            <Recommendations />
+          ) : (
+            <Navigate
+              replace
+              to='/login'
+            />
+          )
+        }
       />
     </Routes>
   )
