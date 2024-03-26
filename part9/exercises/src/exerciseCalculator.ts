@@ -33,7 +33,7 @@ interface ExerciseValues {
   target: number;
   average: number;
 }
-const calculateExercises = (
+export const calculateExercises = (
   target: number,
   dailyExerciseHours: number[]
 ): ExerciseValues => {
