@@ -10,6 +10,9 @@ const Books = () => {
     onCompleted: (result) => {
       setBooks(result.allBooks)
     },
+    onError: (error) => {
+      console.log('HERE', error)
+    },
   })
 
   const [booksByGenre] = useLazyQuery(ALL_BOOKS, {
@@ -17,6 +20,9 @@ const Books = () => {
     fetchPolicy: 'no-cache',
     onCompleted: (result) => {
       setBooks(result.allBooks)
+    },
+    onError: (error) => {
+      console.log('HERE2', error)
     },
   })
 
