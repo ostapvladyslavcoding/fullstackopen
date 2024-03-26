@@ -1,40 +1,50 @@
 import { useLazyQuery, useQuery } from '@apollo/client'
 import { useState } from 'react'
-import { ALL_BOOKS } from '../queries'
+import { ALL_BOOKS, BOOK_GENRES } from '../queries'
 
 const Books = () => {
-  const [filter, setFilter] = useState('')
   const [books, setBooks] = useState([])
+  const [genres, setGenres] = useState([])
+  const [filter, setFilter] = useState('')
 
-  const booksQuery = useQuery(ALL_BOOKS, {
-    onCompleted: (result) => {
-      setBooks(result.allBooks)
-    },
-    onError: (error) => {
-      console.log('HERE', error)
+  const queryBooks = useQuery(ALL_BOOKS, {
+    onCompleted: (data) => {
+      setBooks(data.allBooks)
     },
   })
 
-  const [booksByGenre] = useLazyQuery(ALL_BOOKS, {
-    variables: { genre: filter },
+  const queryGenres = useQuery(BOOK_GENRES, {
     fetchPolicy: 'no-cache',
-    onCompleted: (result) => {
-      setBooks(result.allBooks)
-    },
-    onError: (error) => {
-      console.log('HERE2', error)
+    onCompleted: (data) => {
+      const unique = data.allBooks.reduce((acc, book) => {
+        book.genres.forEach((genre) => {
+          if (!acc.includes(genre)) {
+            acc.push(genre)
+          }
+        })
+        return acc
+      }, [])
+      setGenres(unique)
     },
   })
 
-  const genres = [...new Set(books.flatMap((book) => book.genres))]
+  const queryFiltered = useLazyQuery(ALL_BOOKS, {
+    variables: { genre: filter },
+    onCompleted: (data) => {
+      setBooks(data.allBooks)
+    },
+  })
 
-  const handleClick = (genre) => {
+  if (queryBooks.loading || queryGenres.loading) {
+    return <div>loading...</div>
+  }
+
+  const handleClick = async (genre) => {
     setFilter(genre)
-
     if (genre === '') {
-      booksQuery.refetch()
+      queryBooks.refetch()
     } else {
-      booksByGenre({ variables: { genre } })
+      queryFiltered[0]()
     }
   }
 
@@ -70,7 +80,12 @@ const Books = () => {
                   </button>
                 )
               })}
-              <button onClick={() => handleClick('')}>all genres</button>
+              <button
+                type='button'
+                onClick={() => handleClick('')}
+              >
+                all genres
+              </button>
             </td>
           </tr>
         </tbody>

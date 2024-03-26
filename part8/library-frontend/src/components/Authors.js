@@ -1,6 +1,15 @@
+import { useQuery } from '@apollo/client'
+import { ALL_AUTHORS } from '../queries'
 import EditForm from './EditForm'
 
-const Authors = ({ authors }) => {
+const Authors = () => {
+  const result = useQuery(ALL_AUTHORS)
+
+  if (result.loading) {
+    return <div>loading...</div>
+  }
+
+  const authors = result.data.allAuthors
   return (
     <div>
       <h2>authors</h2>

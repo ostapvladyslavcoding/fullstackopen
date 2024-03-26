@@ -1,4 +1,4 @@
-import { useApolloClient, useQuery, useSubscription } from '@apollo/client'
+import { useApolloClient, useSubscription } from '@apollo/client'
 import { useState } from 'react'
 import { Link, Navigate, Route, Routes } from 'react-router-dom'
 import Authors from './components/Authors'
@@ -6,27 +6,26 @@ import Books from './components/Books'
 import LoginForm from './components/LoginForm'
 import NewBook from './components/NewBook'
 import Recommendations from './components/Recommendations'
-import { ALL_AUTHORS, ALL_BOOKS, BOOK_ADDED } from './queries'
+import { ALL_BOOKS, BOOK_ADDED } from './queries'
 
 export const updateCache = (cache, query, addedBook) => {
-  const uniqByName = (a) => {
+  const uniqByTitle = (a) => {
     let seen = new Set()
     return a.filter((item) => {
-      let k = item.name
+      let k = item.title
       return seen.has(k) ? false : seen.add(k)
     })
   }
-  cache.updateQuery(query, ({ allBooks }) => {
+
+  cache.updateQuery(query, (data) => {
     return {
-      allBooks: uniqByName(allBooks.concat(addedBook)),
+      allBooks: uniqByTitle(data.allBooks.concat(addedBook)),
     }
   })
 }
 
 const App = () => {
   const [token, setToken] = useState(localStorage.getItem('library-user-token'))
-  const authors = useQuery(ALL_AUTHORS)
-  const books = useQuery(ALL_BOOKS)
   const client = useApolloClient()
 
   useSubscription(BOOK_ADDED, {
@@ -39,10 +38,6 @@ const App = () => {
       updateCache(client.cache, { query: ALL_BOOKS }, addedBook)
     },
   })
-
-  if (authors.loading || books.loading) {
-    return <div>loading...</div>
-  }
 
   const logout = () => {
     setToken(null)
@@ -83,16 +78,11 @@ const App = () => {
     <Routes>
       <Route
         path='/'
-        element={
-          <Authors
-            token={token}
-            authors={authors.data.allAuthors}
-          />
-        }
+        element={<Authors />}
       />
       <Route
         path='/books'
-        element={<Books books={books.data.allBooks} />}
+        element={<Books />}
       />
       <Route
         path='/add_book'

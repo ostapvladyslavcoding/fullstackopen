@@ -1,18 +1,17 @@
 import { useMutation } from '@apollo/client'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ALL_AUTHORS, ALL_BOOKS, CREATE_BOOK } from '../queries'
+import { CREATE_BOOK } from '../queries'
 
 const NewBook = () => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [published, setPublished] = useState('')
   const [genre, setGenre] = useState('')
-  const [genres, setGenres] = useState([])
+  const [genres, setGenres] = useState([''])
   const navigate = useNavigate()
 
   const [createBook] = useMutation(CREATE_BOOK, {
-    refetchQueries: [{ query: ALL_BOOKS }, { query: ALL_AUTHORS }],
     onError: (error) => {
       console.error(error.graphQLErrors[0].message)
     },
