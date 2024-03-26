@@ -7,8 +7,6 @@ const Author = require('./models/author')
 const Book = require('./models/book')
 const User = require('./models/user')
 
-console.log('process.env.JWT_SECRET', process.env.JWT_SECRET)
-
 const resolvers = {
   Query: {
     bookCount: async () => Book.collection.countDocuments(),
@@ -21,7 +19,7 @@ const resolvers = {
       return Book.find({ ...authorFilter, ...genreFilter }).populate('author')
     },
     allAuthors: async () => {
-      return Author.find({})
+      return Author.find({}).populate('books')
     },
     me: (root, args, context) => {
       return context.currentUser
@@ -29,7 +27,7 @@ const resolvers = {
   },
   Author: {
     bookCount: async (root) => {
-      return Book.collection.countDocuments({ author: root._id })
+      return root.books.length
     },
   },
   Mutation: {
@@ -54,6 +52,8 @@ const resolvers = {
       }
       try {
         const book = await Book.create({ ...args, author: author._id })
+        author.books = author.books.concat(book._id)
+        await author.save()
         const populatedBook = await book.populate('author')
 
         pubsub.publish('BOOK_ADDED', { bookAdded: populatedBook })

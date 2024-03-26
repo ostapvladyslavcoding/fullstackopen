@@ -21,6 +21,7 @@ const resolvers = require('./resolvers')
 
 const MONGODB_URI = process.env.MONGODB_URI
 console.log('connecting to', MONGODB_URI)
+mongoose.set('debug', true)
 mongoose
   .connect(MONGODB_URI)
   .then(() => {
