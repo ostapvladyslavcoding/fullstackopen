@@ -1,4 +1,6 @@
-const data = [
+import { PatientEntry } from '../src/types';
+
+const data: PatientEntry[] = [
   {
     id: 'd2773336-f723-11e9-8f0b-362b9e155667',
     name: 'John McClane',
