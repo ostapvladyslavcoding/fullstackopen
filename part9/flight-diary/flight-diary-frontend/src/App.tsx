@@ -1,8 +1,10 @@
+import DiaryEntries from './components/DiaryEntries.tsx';
+
 const App = () => {
   return (
-    <>
-      <>hello world</>
-    </>
+    <div>
+      <DiaryEntries />
+    </div>
   );
 };
 
