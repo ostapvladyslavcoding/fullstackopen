@@ -24,3 +24,5 @@ export interface DiaryEntry {
 export interface DiaryEntriesProps {
   diaryEntries: DiaryEntry[];
 }
+
+export type NewDiaryEntry = Omit<DiaryEntry, 'id'>;
