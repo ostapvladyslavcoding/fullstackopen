@@ -7,8 +7,14 @@ const DiaryEntries = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const data = await getAllEntries();
-      setDiaryEntries(data);
+      try {
+        const data = await getAllEntries();
+        setDiaryEntries(data);
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          throw new Error(`Error: ${error.message}`);
+        }
+      }
     };
 
     fetchData();
