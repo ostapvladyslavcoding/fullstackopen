@@ -102,7 +102,7 @@ const DiaryForm = () => {
             value='rainy'
             name='weather'
             checked={weather === 'rainy'}
-            onChange={() => setWeather(Weather.Sunny)}
+            onChange={() => setWeather(Weather.Rainy)}
           />
           cloudy
           <input
